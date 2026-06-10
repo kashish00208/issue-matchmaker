@@ -1,3 +1,5 @@
+import { error } from "node:console";
+
 export class RepoScannerTool {
     private gitlabToken:string;
     constructor(){
