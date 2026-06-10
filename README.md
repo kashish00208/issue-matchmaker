@@ -1,144 +1,73 @@
-## What Is Dev Companion?
-
-Dev Companion is an AI-powered chatbot that helps developers **finish their side projects** instead of starting new ones. It solves the common problem: too many unfinished projects, poor task breakdown, and forgetting where you left off.
-
----
-
-## Core Problem It Solves
-
-| Developer Pain Point | Dev Companion Solution |
-|---------------------|----------------------|
-| "I have 10 side projects started but 0 finished" | Helps prioritize and focus on ONE project at a time |
-| "I don't know what to work on next" | Breaks big tasks into smallest actionable steps |
-| "I forgot where I left off" | Tracks last worked date, reminds you to check in |
-| "Scope creep - I keep adding features" | Helps define MVP, detects feature creep |
-
----
-
-
-## Feature List
-
-### Core Features
-
--  **Project Registry** - Add, edit, delete, track projects
--  **Task Breakdown** - AI breaks big tasks into smallest actionable steps
--  **Focus Mode** - Helps you focus on one project at a time
--  **Check-in System** - Reminds you of abandoned projects
--  **Status Tracking** - Active / Paused / Completed / Waiting
-
-### Showcase Features (Bonus)
-
--  **Dashboard** - Visual overview of all projects
--  **Daily Standup** - "What will you work on today?"
--  **Scope Creep Detector** - Flags non-MVP features
--  **Progress Tracking** - See completion over time
--  **Notifications** - Remind to check in on projects
-
----
-
-## How It Works (Technical)
-
-### Architecture
-
-```
-┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-│   Frontend   │ ───► │  API Routes  │ ───► │   Database   │
-│  (Next.js)   │      │  (Node.js)   │      │  (SQLite)    │
-└──────────────┘      └──────────────┘      └──────────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │  OpenAI API  │
-                     │  (GPT-4)     │
-                     └──────────────┘
-```
-
-
-
-```
-Project {
-  id: string
-  name: string
-  description: string
-  status: "active" | "paused" | "completed" | "waiting"
-  lastWorkedOn: datetime
-  createdAt: datetime
-  updatedAt: datetime
-}
-
-Task {
-  id: string
-  projectId: string
-  title: string
-  isCompleted: boolean
-  createdAt: datetime
-}
-
-Conversation {
-  id: string
-  projectId: string?
-  messages: JSON
-  createdAt: datetime
-}
-```
-
-### Prompt Structure
-
-```
-System: You are DevBuddy, a developer companion AI.
-
-Your goals:
-1. Help developers FINISH projects, not start new ones
-2. Break big tasks into smallest actionable steps
-3. Check in on abandoned/paused projects
-4. Keep focus on MVP (minimum viable product)
-5. Be concise and action-oriented
-
-Rules:
-- Always ask clarifying questions
-- Never let user create a new project without checking unfinished ones
-- Break tasks into subtasks that can be done in 1-2 hours
-- Use encouraging but direct tone
-```
-
----
-
-## User Interactions
-
-| User Says | Dev Companion Responds |
-|----------|----------------------|
-| "I have a new idea" | "Let's check your active projects first" |
-| "What should I work on?" | Shows prioritized list based on last worked |
-| "I'm stuck" | "What's blocking? Let's break it down" |
-| "I want to add a feature" | "Is that MVP? What problem does it solve?" |
-| "I haven't worked on this in weeks" | "What's holding you back?" |
-
----
-
-## Success Metrics
-
--  Reduced number of active side projects
--  More projects moved from "active" to "completed"
--  Faster task completion (focused sessions)
--  Reduced scope creep in projects
-
----
-
-## Demo Scenarios
-
-### Scenario 1: The Overwhelmed Developer
-
-**User:** "I have 8 side projects. Help!"
-**Dev Companion:** "That's a lot. Pick your top 3. We'll focus on finishing ONE at a time. Which matters most right now?"
-
-### Scenario 2: The Scope Creepper
-
-**User:** "I want to add dark mode, animations, and social sharing to my app"
-**Dev Companion:** "That's v2. What's the ONE thing your app needs to be useful? Let's strip to MVP first."
-
-### Scenario 3: The Returner
-
-**User:** "I haven't worked on my app in 2 weeks"
-**Dev Companion:** "Welcome back! You left off at adding user profiles. Want to jump back in or pick a different task?"
-
-
+issue-matchmaker/
+├── packages/
+│   ├── agent/               # Google Cloud Agent Builder integration
+│   │   ├── src/
+│   │   │   ├── index.ts     # Agent orchestrator entry point
+│   │   │   ├── tools/
+│   │   │   │   ├── repo-scanner.ts      # MCP calls: list issues, get repo health
+│   │   │   │   ├── issue-scorer.ts      # AI prompt: score issues against user
+│   │   │   │   ├── health-indexer.ts    # Calc: merge time, maintainer response
+│   │   │   │   └── starter-plan.ts      # Generate step-by-step walkthrough
+│   │   │   ├── prompts/
+│   │   │   │   ├── scoring.prompt.ts    # "You are an OSS mentor..." prompt
+│   │   │   │   └── repo-verdict.prompt.ts
+│   │   │   ├── types/
+│   │   │   │   ├── issue.ts             # Issue, IssueScore, RepoHealth
+│   │   │   │   ├── user-profile.ts      # Skills, time, goal
+│   │   │   │   └── agent-response.ts    # What agent returns
+│   │   │   └── utils/
+│   │   │       ├── gitlab-mcp.ts        # GitLab MCP client setup
+│   │   │       ├── gemini-client.ts     # Call Gemini API for scoring
+│   │   │       └── cache.ts             # Cache repo health (6-12 hrs)
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   ├── api/                 # Express/Next.js API routes
+│   │   ├── src/
+│   │   │   ├── routes/
+│   │   │   │   ├── onboard.ts           # POST /api/onboard → user profile
+│   │   │   │   ├── analyze-repo.ts      # POST /api/analyze → repo verdict + issues
+│   │   │   │   ├── issue-detail.ts      # GET /api/issue/:id → starter plan
+│   │   │   │   └── health.ts            # GET /api/health (for testing)
+│   │   │   ├── middleware/
+│   │   │   │   ├── validate-input.ts
+│   │   │   │   └── error-handler.ts
+│   │   │   ├── index.ts                 # Express app setup
+│   │   │   └── config.ts                # Env: GEMINI_API_KEY, GITLAB_MCP_URL
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   └── web/                 # Next.js frontend
+│       ├── app/
+│       │   ├── page.tsx               # Landing / onboard form
+│       │   ├── layout.tsx
+│       │   ├── repo-verdict/
+│       │   │   └── page.tsx           # Repo health + go/no-go
+│       │   ├── issues/
+│       │   │   └── [issueId]/
+│       │   │       └── page.tsx       # Issue detail + starter plan
+│       │   └── api/                   # API routes that call /api package
+│       │       ├── onboard.ts
+│       │       ├── analyze.ts
+│       │       └── issue.ts
+│       ├── components/
+│       │   ├── ProfileForm.tsx
+│       │   ├── RepoVerdict.tsx
+│       │   ├── IssueCard.tsx
+│       │   ├── StarterPlan.tsx
+│       │   └── HealthBadge.tsx
+│       ├── hooks/
+│       │   ├── useAgent.ts            # Call agent, manage loading/error
+│       │   └── useProfile.ts          # Persist user skills locally
+│       ├── types/
+│       │   └── index.ts               # Shared types
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── next.config.js
+│
+├── .env.example              # GEMINI_API_KEY, GITLAB_MCP_URL, GCP_PROJECT_ID
+├── .gitignore
+├── package.json              # Root monorepo config (yarn/pnpm workspaces)
+├── tsconfig.json             # Root TypeScript config
+├── LICENSE                   # MIT or Apache 2.0
+└── README.md
