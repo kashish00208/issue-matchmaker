@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo
 
-🌐 **[https://issue-matchmaker-demo.vercel.app](https://issue-matchmaker-demo.vercel.app)**
+🌐 **[https://issue-matchmaker.vercel.app/](https://issue-matchmaker.vercel.app/)**
 
 ---
 
@@ -149,56 +149,6 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 📦 Deploying to Vercel
-
-1. Push repo to GitHub
-2. Go to [vercel.com](https://vercel.com) → Import Project
-3. Set **Root Directory** to `packages/web`
-4. Add environment variables (`GITLAB_TOKEN`, `GEMINI_API_KEY`)
-5. Deploy → get your live URL
-
----
-
-## 📡 API Reference
-
-### `POST /api/match`
-
-**Request body:**
-```json
-{
-  "repoUrl": "https://gitlab.com/namespace/project",
-  "skills": ["TypeScript", "React", "Node.js"],
-  "hoursPerWeek": 5
-}
-```
-
-**Response:**
-```json
-{
-  "repoHealth": {
-    "name": "my-project",
-    "stars": 120,
-    "avgMergeTimeHours": 48,
-    "avgResponseTimeHours": 6,
-    "verdict": "Active maintainer"
-  },
-  "issues": [
-    {
-      "iid": 42,
-      "title": "Add dark mode support",
-      "score": 9,
-      "reason": "Matches React skills, well-scoped for 5hrs/week",
-      "url": "https://gitlab.com/namespace/project/-/issues/42"
-    }
-  ],
-  "starterPlan": [
-    { "step": 1, "action": "Clone the repo", "detail": "git clone ..." },
-    { "step": 2, "action": "Find the theme file", "detail": "..." }
-  ]
-}
-```
-
----
 
 ## 🧩 Key Design Decisions
 
