@@ -7,9 +7,9 @@ import type UserProfile from "./types/user-profile";
 // Agent Initialization 
 
 export async function initAgent() {
-  const repoScanner = new RepoScannerTool();   // MCP: list issues, repo health
-  const issueScorer = new IssueScorerTool();   // AI: score issues vs user
-  const healthIndexer = new HealthIndexerTool(); // Calc: merge time, response
+  const repoScanner = new RepoScannerTool();   
+  const issueScorer = new IssueScorerTool();  
+  const healthIndexer = new HealthIndexerTool(); 
   const starterPlan = new StarterPlanTool();   // Generate walkthrough
 
   return { repoScanner, issueScorer, healthIndexer, starterPlan };
@@ -29,16 +29,15 @@ export async function runAgent(
   const { issues, repoHealth } = await repoScanner.run(repoUrl);
 
   // Step 2: Index health metrics (merge time, maintainer response)
-  const healthScore = await healthIndexer.run(repoHealth);
+  const healthScore = await healthIndexer.run(repoUrl);
 
   // Step 3: Score each issue against user profile (skills, time, goal)
-  const scoredIssues = await issueScorer.run(issues, userProfile, scoringPrompt);
+  const scoredIssues = await issueScorer.run(issues, userProfile );
 
   // Step 4: Generate step-by-step starter plan for top issue
   const topIssue = scoredIssues[0];
-  const plan = await starterPlan.run(topIssue, repoHealth);
+  const plan = await starterPlan.run(topIssue, userProfile);
 
-  // Step 5: Build final agent response
   return {
     repoVerdict: repoVerdictPrompt(repoHealth, healthScore),
     recommendedIssues: scoredIssues.slice(0, 5),

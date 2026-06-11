@@ -29,6 +29,7 @@ export class HealthIndexerTool {
             validTimes.reduce((a, b) => a + b, 0) / validTimes.length / (1000 * 60 * 60)
         );
         return {
+            avgMergetimeHors:validTimes,
             avgResponseTimeHours: avgResponseHours,
             verdict: avgResponseHours < 24 ? 'Active maintainer' : 'Slow maintainer'
         };
