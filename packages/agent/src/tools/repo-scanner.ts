@@ -29,3 +29,5 @@ export class RepoScannerTool {
     }
 
 }
+
+export default RepoScannerTool;

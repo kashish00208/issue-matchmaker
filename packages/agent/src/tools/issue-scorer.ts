@@ -39,3 +39,4 @@ export class IssueScorerTool {
       .sort((a, b) => b.score - a.score);
   }
 }
+export default IssueScorerTool;

@@ -2,6 +2,7 @@ import RepoScannerTool from "./tools/repo-scanner";
 import IssueScorerTool from "./tools/issue-scorer";
 import HealthIndexerTool from "./tools/health-indexer";
 import StarterPlanTool from "./tools/starter-plan";
+import type UserProfile from "./types/user-profile";
 
 // Agent Initialization 
 
