@@ -2,7 +2,9 @@ import RepoScannerTool from "./tools/repo-scanner";
 import IssueScorerTool from "./tools/issue-scorer";
 import HealthIndexerTool from "./tools/health-indexer";
 import StarterPlanTool from "./tools/starter-plan";
-import type UserProfile from "./types/user-profile";
+import {type AgentResponse } from "./types/agent-response";
+import {type UserProfile } from "./types/user-profile";
+import { repoVerdictPrompt } from "./prompts/repo-verdict.prompt";
 
 // Agent Initialization 
 
@@ -38,11 +40,24 @@ export async function runAgent(
   const topIssue = scoredIssues[0];
   const plan = await starterPlan.run(topIssue, userProfile);
 
+  const verdict = repoVerdictPrompt(repoHealth, healthScore);
+  const { avgMergetimeHors, ...restRepoHealth } = repoHealth as any;
+  const avgMergeTimeHours = Array.isArray(avgMergetimeHors)
+    ? avgMergetimeHors.reduce((sum, value) => sum + value, 0) / (avgMergetimeHors.length || 1)
+    : avgMergetimeHors;
+
+  const combinedRepoHealth = {
+    ...restRepoHealth,
+    ...healthScore,
+    ...(avgMergeTimeHours !== undefined ? { avgMergeTimeHours } : {}),
+    verdict,
+  };
+
   return {
-    repoVerdict: repoVerdictPrompt(repoHealth, healthScore),
-    recommendedIssues: scoredIssues.slice(0, 5),
+    verdict,
+    issues: scoredIssues.slice(0, 5),
     starterPlan: plan,
-    healthScore,
+    repoHealth: combinedRepoHealth,
   };
 }
 
